@@ -11,14 +11,18 @@
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard.index');
-});
+Route::get('/', 'DashboardController@index');
 
 Route::get('/login', function () {
+
     return view('login.index');
 });
 
+Route::get('/teste', function () {
+    $teste = DB::connection('oracle')
+        ->table('LOG_CONTROLE_IMPORTACAO')->get();
+    return $teste;
+});
 //ROUTE PARA FAZER A MIGRAÇÃO DO BANCO ANTIGO PARA O NOVO
 Route::get('/change','ChangeOldController@index');
 
