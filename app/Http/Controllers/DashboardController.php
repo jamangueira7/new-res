@@ -15,6 +15,32 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        return view('dashboard.index', [
+            'unimeds' => $this->makeData(),
+            'bet_ini' => null,
+            'bet_fim' => null,
+        ]);
+    }
+
+    public function searchForm(Request $request)
+    {
+       /* $resp = Array();
+        foreach ($request->get('codigo_unimed') as $unimed){
+            $val = explode("-",$unimed);
+            array_push($resp, $val[0]);
+        }*/
+
+        session()->flash('success', [
+            'bet_ini' => $request->get('bet_ini'),
+            'bet_fim' => $request->get('bet_fim'),
+            'codigo_unimed' => $request->get('codigo_unimed')
+        ]);
+
+        return redirect()->route('dashboard.index');
+    }
+
+    private function makeData()
+    {
         $unimeds = DB::connection('oracle')
             ->table('RES_UNIDADE_SAUDE')
             ->leftJoin('RES_UNIDADE_IDENTIFICACAO', 'RES_UNIDADE_SAUDE.nr_sequencia', '=', 'RES_UNIDADE_IDENTIFICACAO.nr_seq_unidade_saude')
@@ -22,11 +48,7 @@ class DashboardController extends Controller
             ->where('RES_UNIDADE_IDENTIFICACAO.cd_tipo_identificacao','=','IDUN')
             ->orderBy('RES_UNIDADE_SAUDE.nm_unidade_saude','ASC')
             ->get();
-
-
-        return view('dashboard.index', [
-            'unimeds' => $unimeds
-        ]);
+        return $unimeds;
     }
 
     /**

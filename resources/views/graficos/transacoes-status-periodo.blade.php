@@ -1,32 +1,37 @@
+<!-- #################### Transações x Status x Período - VISUAL #####################-->
+<div class="box box-primary collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title">Transações x Status x  Período</h3>
 
-    {{--<div class="col-md-6">--}}
-            <div class="box-header with-border">
-                <h3 class="box-title">Transações x Status x  Período</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <!-- Transacoes x Status x  Período -->
+        <div class="col-md-12">
+            <div class="box-body" style="">
+                <canvas id="TransStatusPeriodo" style="height: 229px; width: 458px;" width="458" height="229"></canvas>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer text-center">
 
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                <!-- Transacoes x Status x  Período -->
-                <div class="col-md-12">
-                    <div class="box-body" style="">
-                        <canvas id="TransStatusPeriodo" style="height: 229px; width: 458px;" width="458" height="229"></canvas>
-                    </div>
-                </div>
-            </div>
-            <!-- /.box-body -->
-            <div class="box-footer text-center">
-
-            </div>
+    </div>
+    <!-- /.box-footer -->
+</div>
+<!-- ####################FIM Transações x Status x Período - VISUAL #####################-->
     <?php
     $results = DB::connection('oracle')
-    ->select("SELECT TO_CHAR(DT_LOG, 'dd-mm-yyyy') as DT_LOG,
-       COUNT ((CASE WHEN DS_STATUS = 'ERRO' THEN 1 ELSE NULL END)) as ERRO,
-       COUNT ((CASE WHEN DS_STATUS = 'SUCESSO' THEN 1 ELSE NULL END)) as SUCESSO
-        FROM VW_LOG_TRANSACAO_RES_XML
+    ->select("SELECT
+TO_CHAR(dt_log, 'dd-mm-yyyy') AS DT_log,
+COUNT ((CASE WHEN DS_STATUS = 'ERRO' THEN 1 ELSE NULL END)) AS ERRO,
+COUNT ((CASE WHEN DS_STATUS = 'SUCESSO' THEN 1 ELSE NULL END)) AS SUCESSO
+FROM
+vw_log_transacao_res_xml
         where {$where}
         GROUP BY TO_CHAR(dt_log, 'dd-mm-yyyy')
         ORDER BY substr(DT_LOG,4,2) asc, substr(DT_LOG,0,2) asc");

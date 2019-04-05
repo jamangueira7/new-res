@@ -32,3 +32,10 @@ function getColor($num) {
 
     return !empty($color[$num]) ? $color[$num] : '#'.rand ( 0 , 9).rand ( 0 , 9).rand ( 0 , 9).rand ( 0 , 9).rand ( 0 , 9).rand ( 0 , 9);
 }
+
+function dataSimple($data) {
+    $new_data = explode('/', $data);
+
+    $new_data = $new_data[2] . '-' . $new_data[1] . '-' . $new_data[0];
+    return $new_data;
+}

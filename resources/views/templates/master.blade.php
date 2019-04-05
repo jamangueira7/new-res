@@ -18,7 +18,7 @@
 
             {{--CONTEUDO DO SISTEMA--}}
             <div class="content-wrapper">
-                <section class="content-header">
+                <section id="content-header" class="content-header">
                     @yield('conteudo-view')
                 </section>
             </div>
@@ -26,6 +26,6 @@
             {{--RODAPÉ DO SISTEMA--}}
             @include('templates.footer')
         </div>
-
+        @yield('js-view')
     </body>
 </html>

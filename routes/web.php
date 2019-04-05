@@ -11,8 +11,8 @@
 |
 */
 
-Route::get('/', 'DashboardController@index');
-
+Route::get('/', ['as' => 'dashboard.index','uses' => 'DashboardController@index']);
+Route::post('/searchDashboard', ['as' => 'search.dashboard','uses' => 'DashboardController@searchForm']);
 Route::get('/login', function () {
 
     return view('login.index');
