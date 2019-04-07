@@ -31,11 +31,28 @@ function getColor($num) {
     $color[21] = '#FECC00';
 
     return !empty($color[$num]) ? $color[$num] : '#'.rand ( 0 , 9).rand ( 0 , 9).rand ( 0 , 9).rand ( 0 , 9).rand ( 0 , 9).rand ( 0 , 9);
-}
+}//getColor
 
 function dataSimple($data) {
     $new_data = explode('/', $data);
 
     $new_data = $new_data[2] . '-' . $new_data[1] . '-' . $new_data[0];
     return $new_data;
-}
+}//dataSimple
+
+
+function convDateMySQLforDateTime($data, $ini = true) {
+    $new_data = explode('/', $data);
+
+    $new_data = $new_data[2] . '-' . $new_data[1] . '-' . $new_data[0];
+    $new_data .= ($ini) ? " 00:00:01" : " 23:59:59";
+    return $new_data;
+}//convDateMySQLforDateTime
+
+function convDateTimeWithBr($data) {
+    $new_data = explode('-', $data);
+    $hour = explode(' ', $new_data[2]);
+
+    $new_data = $hour[0] . '/' . $new_data[1] . '/' . $new_data[0] . ' ' . $hour[1];
+    return $new_data;
+}//convDateTimeWithBr

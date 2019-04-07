@@ -18,8 +18,20 @@
 
             {{--CONTEUDO DO SISTEMA--}}
             <div class="content-wrapper">
+
                 <section id="content-header" class="content-header">
-                    @yield('conteudo-view')
+                    {{--MENSAGENS AO USUARIO--}}
+                   @if(!empty(session('success')['success']))
+                       <div class="alert alert-success" role="alert">
+                           {{session('success')['messages']}}
+                       </div>
+                   @endif
+                   @if(!empty(session('success')['error']))
+                       <div class="alert alert-danger" role="alert">
+                           {{session('error')['messages']}}
+                       </div>
+                   @endif
+                   @yield('conteudo-view')
                 </section>
             </div>
 

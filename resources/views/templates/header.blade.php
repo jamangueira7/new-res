@@ -7,6 +7,7 @@
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" title=''>
             <span class="sr-only">Menu</span>
         </a>
+        {{--DADOS MENU--}}
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <li class="dropdown user user-menu">

@@ -20,7 +20,7 @@
             </a>
             <ul class="treeview-menu">
                 <li class="active">
-                    <a href="#">
+                    <a href="{{route('user.index')}}">
                         <i class="fa fa-user"></i>Usuário
                     </a>
                 </li>
@@ -37,19 +37,19 @@
             <ul class="treeview-menu">
                 {{--SUBMENU RELATORIOS->LOG ACESSO--}}
                 <li class="">
-                    <a href="#">
+                    <a href="{{route('report.index')}}">
                         <i class="fa fa-group"></i>Log de acesso
                     </a>
                 </li>
                 {{--SUBMENU RELATORIOS->CRITICAS--}}
                 <li class="">
-                    <a href="#">
+                    <a href="{{route('report.review')}}">
                         <i class="fa fa-exclamation-triangle"></i>Críticas
                     </a>
                 </li>
                 {{--SUBMENU RELATORIOS->TRANSAÇÃO--}}
                 <li class="">
-                    <a href="#">
+                    <a href="{{route('report.transaction')}}">
                         <i class="fa fa-exchange"></i>Transação
                     </a>
                 </li>
