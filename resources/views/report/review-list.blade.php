@@ -10,19 +10,29 @@
     <table id="example" border="1" class="tablesorter table table-bordered table-hover dataTable tableData">
         <thead>
             <tr>
-                <th class="al_center">Usuário</th>
-                <th class="al_center">E-mail</th>
-                <th class="al_center">Descrição</th>
-                <th class="al_center sorter-shortDate dateFormat-ddmmyyyy">Data</th>
+                <th class="al_center">Código</th>
+                <th class="al_center">Código Beneficiários</th>
+                <th class="al_center">Nome Beneficiários</th>
+                <th class="al_center">Código critica</th>
+                <th class="al_center">Data critica</th>
+                <th class="al_center">Data atualização registro</th>
+                <th class="al_center">Número sequência</th>
+                <th class="al_center">Mensagem de retorno</th>
+                <th class="al_center">Coluna erro</th>
             </tr>
         </thead>
         <tbody>
             @foreach($logs as $log)
                 <tr>
-                    <td>{{$log->name}}</td>
-                    <td>{{$log->email}}</td>
-                    <td align="center">{{$log->action}}</td>
-                    <td align="center">{{convDateTimeWithBr($log->created_at)}}</td>
+                    <td>{{$log->id_unimed}}</td>
+                    <td align="center">{{$log->id_beneficiario}}</td>
+                    <td align="center">{{$log->nm_beneficiario}}</td>
+                    <td align="center">{{$log->id_critica}}</td>
+                    <td align="center">{{convDateTimeWithBr($log->dt_critica)}}</td>
+                    <td align="center">{{convDateTimeWithBr($log->dt_atualizacao_reg)}}</td>
+                    <td align="center">{{$log->nr_sequencia_reg}}</td>
+                    <td align="center">{{$log->ds_erro}}</td>
+                    <td align="center">{{$log->ds_coluna_erro}}</td>
                 </tr>
             @endforeach
         </tbody>

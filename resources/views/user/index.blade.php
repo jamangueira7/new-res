@@ -15,7 +15,7 @@
                     </div>
                     <div class="box-body">
                         <div class="itwv_caixa">
-                            <a class="btn btn-plus btn-sm" href="{{route('user.store')}}" title='Adicionar novo usuário'><i class="fa fa-plus"></i></a>
+                            <a class="btn btn-plus btn-sm" href="{{route('user.create')}}" title='Adicionar novo usuário'><i class="fa fa-plus"></i></a>
 
                             <div class="no-padding table-responsive">
                                 <table class="table table-hover al_center" style="max-width: 99.99%;" id="example">

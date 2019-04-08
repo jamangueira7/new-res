@@ -31,8 +31,12 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
-        return "teste1111";
+        $levels = DB::connection('principal')
+            ->table('levels')
+            ->get();
+        return view('user.create', [
+            'levels' => $levels
+        ]);
     }
 
     /**
@@ -43,8 +47,36 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        return "teste222";
+        if($request->get('password') != $request->get('confirm')){
+            session()->flash('error', [
+                'error' => true,
+                'messages' => "Erro - Os campos de senhas precisam ser iguais.",
+            ]);
+            return redirect()->route('user.create');
+        }
+        $user = new User;
+        $user->name = $request->get('name');
+        $user->cpf = $request->get('cpf');
+        $user->email = $request->get('email');
+        $user->password = $request->get('password');
+        $user->level_id = $request->get('level');
+        $user->birth = $request->get('birth');
+        $user->sex = $request->get('sex');
+        $user->save();
+
+        if(!$user->save()){
+            session()->flash('error', [
+                'error' => true,
+                'messages' => "Erro ao atualizar usuário. Por favor informe a um administrador.",
+            ]);
+        }else{
+            session()->flash('success', [
+                'success' => true,
+                'messages' => "Usuário alterado com sucesso.",
+            ]);
+        }
+
+        return redirect()->route('user.index');
     }
 
     /**
@@ -53,9 +85,9 @@ class UserController extends Controller
      * @param  \App\UserPermission  $userPermission
      * @return \Illuminate\Http\Response
      */
-    public function show(UserPermission $userPermission)
+    public function show()
     {
-        return "teste3333";
+
     }
 
     /**

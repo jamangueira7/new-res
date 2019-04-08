@@ -28,6 +28,7 @@ Route::get('/restore/{id}', ['as' => 'user.restore','uses' => 'UserController@re
 Route::get('/log-access', ['as' => 'report.index','uses' => 'ReportController@index']);
 Route::post('/access-list', ['as' => 'report.access-list','uses' => 'ReportController@listAccessLog']);
 Route::get('/log-review', ['as' => 'report.review','uses' => 'ReportController@review']);
+Route::post('/review-list', ['as' => 'report.review-list','uses' => 'ReportController@listReviewLog']);
 Route::get('/log-transaction', ['as' => 'report.transaction','uses' => 'ReportController@transaction']);
 
 //CONFIGURATION

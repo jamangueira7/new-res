@@ -26,7 +26,7 @@
                            {{session('success')['messages']}}
                        </div>
                    @endif
-                   @if(!empty(session('success')['error']))
+                   @if(!empty(session('error')['error']))
                        <div class="alert alert-danger" role="alert">
                            {{session('error')['messages']}}
                        </div>

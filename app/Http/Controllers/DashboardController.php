@@ -24,11 +24,6 @@ class DashboardController extends Controller
 
     public function searchForm(Request $request)
     {
-       /* $resp = Array();
-        foreach ($request->get('codigo_unimed') as $unimed){
-            $val = explode("-",$unimed);
-            array_push($resp, $val[0]);
-        }*/
 
         session()->flash('success', [
             'bet_ini' => $request->get('bet_ini'),
@@ -42,14 +37,9 @@ class DashboardController extends Controller
     private function makeData()
     {
         $unimeds = DB::connection('oracle')
-            ->table('RES_UNIDADE_SAUDE')
-            ->leftJoin('RES_UNIDADE_IDENTIFICACAO', 'RES_UNIDADE_SAUDE.nr_sequencia', '=', 'RES_UNIDADE_IDENTIFICACAO.nr_seq_unidade_saude')
-            ->select('RES_UNIDADE_SAUDE.cd_sistema_origem AS id_unimed','RES_UNIDADE_SAUDE.nm_unidade_saude AS ds_unimed')
-            ->where('RES_UNIDADE_IDENTIFICACAO.cd_tipo_identificacao','=','IDUN')
-            ->orderBy('RES_UNIDADE_SAUDE.nm_unidade_saude','ASC')
-            ->get();
+            ->select('RES_UNIDADE_SAUDE');
         return $unimeds;
-    }
+    }//makeData
 
     /**
      * Show the form for creating a new resource.

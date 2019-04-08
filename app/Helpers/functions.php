@@ -56,3 +56,14 @@ function convDateTimeWithBr($data) {
     $new_data = $hour[0] . '/' . $new_data[1] . '/' . $new_data[0] . ' ' . $hour[1];
     return $new_data;
 }//convDateTimeWithBr
+
+function formaterUnimedCodes($data) {
+    $resp = "";
+    foreach ($data as $d){
+        if(!empty($resp)){
+            $resp.= ",";
+        }
+        $resp.= $d;
+    }
+    return $resp;
+}//formaterUnimedCodes
