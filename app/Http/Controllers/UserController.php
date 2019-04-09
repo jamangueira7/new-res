@@ -58,7 +58,7 @@ class UserController extends Controller
         $user->name = $request->get('name');
         $user->cpf = $request->get('cpf');
         $user->email = $request->get('email');
-        $user->password = $request->get('password');
+        $user->password = md5($request->get('password'));
         $user->level_id = $request->get('level');
         $user->birth = $request->get('birth');
         $user->sex = $request->get('sex');
@@ -79,6 +79,48 @@ class UserController extends Controller
         return redirect()->route('user.index');
     }
 
+    public function login(Request $request)
+    {
+        $user = DB::connection('principal')
+            ->table('users')
+            ->select('id','name','email','cpf','password','level_id')
+            ->where('email','=',$request->get('email'))
+            ->whereNull('deleted_at')
+            ->first();
+
+        if(!empty($user) && $user->password == md5($request->get('pass'))){
+            session()->flash('success', [
+                'success' => true,
+                'messages' => "Usuário logado.",
+            ]);
+
+            //CRIAR LOGIN
+            session()->put('login', [
+                'id' => $user->id,
+                'email' => $user->email,
+                'name' => $user->name,
+                'level_id' => $user->level_id
+            ]);
+
+            return redirect()->route('dashboard.index');
+
+        }else{
+            session()->flash('error', [
+                'error' => true,
+                'messages' => "Usuário ou senha incorretos.",
+            ]);
+            return redirect()->route('user.login');
+        }
+
+    }//login
+
+    public function logout()
+    {
+        //CRIAR LOGIN
+        session()->forget('login');
+
+        return redirect()->route('user.login');
+    }//logout
     /**
      * Display the specified resource.
      *

@@ -7,33 +7,65 @@
 
 @section('conteudo-view')
    <section class="content container-fluid">
+       <?php
+       $bet_ini = (!empty(session('success')['bet_ini'])) ? session('success')['bet_ini'] : '01/'.date('m/Y', strtotime('-0 months', strtotime(date('Y-m-d'))));
+       $bet_fim = (!empty(session('success')['bet_fim'])) ? session('success')['bet_fim'] : date('t/m/Y', strtotime('-0 months', strtotime(date('Y-m-d'))));
+       $contSelect = 0;
+       $wCodUniFull = '';
+       $wCodUni = '';
+       ?>
         <div class="box box-primary">
             <div class="box-header with-border">
-                <h3 class="box-title">:</h3>
+                <h3 class="box-title">Filtro relatório:</h3>
             </div>
-            <form action="_modulos/relatorios/transacao/view.php" method="POST" enctype="multipart/form-data" target="_blank" autocomplete="off" class='j_form_report'>
+            {!! Form::open(['route'=> 'report.transaction-list','target' => '_blank','method' => 'post', 'class' => 'form-padrao']) !!}
                 <div class="box-body">
                     <div class="form-group">
-                        <label>:</label>
-                        <select name="codigo_unimed[]" multiple="multiple" class='form-control select2 j_codigo_unimed' style='width:100%;'>
+                        <label>Unimed:</label>
+                        <select name="codigo_unimed[]" id="codigo_unimed" multiple class='form-control select2 j_codigo_unimed' style='width:100%;' required>
 
-                        </select><br /><label style='cursor:pointer;'><input checked type='checkbox' class='j_select_all'>&nbsp</label>
+                            @if(!empty($unimeds))
+                                @foreach($unimeds as $unimed)
+                                    @if(!empty(session('success')['codigo_unimed']))
+                                        @if(in_array($unimed->id_unimed, session('success')['codigo_unimed']))
+                                            <option selected value='{{$unimed->id_unimed}}'>{{$unimed->ds_unimed}}</option>
+                                            <?php
+                                            ((empty($wCodUniFull)) ? $wCodUniFull .= "'".$unimed->id_unimed."'" : $wCodUniFull .= ', '."'".$unimed->id_unimed."'");
+                                            ((empty($wCodUni)) ? $wCodUni .= "'".substr($unimed->id_unimed, 0, 4)."'" : $wCodUni .= ', '."'".substr($unimed->id_unimed, 0, 4)."'");
+                                            $contSelect ++;
+                                            ?>
+                                        @else
+                                            <option value='{{$unimed->id_unimed}}'>{{$unimed->ds_unimed}}</option>
+                                        @endif
+                                    @else
+                                        <option selected value='{{$unimed->id_unimed}}'>{{$unimed->ds_unimed}}</option>
+                                        <?php
+                                        ((empty($wCodUniFull)) ? $wCodUniFull .= "'".$unimed->id_unimed."'" : $wCodUniFull .= ', '."'".$unimed->id_unimed."'");
+                                        ((empty($wCodUni)) ? $wCodUni .= "'".substr($unimed->id_unimed, 0, 4)."'" : $wCodUni .= ', '."'".substr($unimed->id_unimed, 0, 4)."'");
+                                        $contSelect ++;
+                                        ?>
+                                    @endif
+                                @endforeach
+                            @endif
+                        </select>
+
+                        <label style="cursor:pointer;"><input type="checkbox" class="j_select_all" {{(count($unimeds) == $contSelect) ? 'checked' : ''}} >&nbsp;Todas as opções</label>
                     </div>
                     <div class="form-group">
-                        <label>:</label>
+                        <label>Código do beneficiário:</label>
                         <input name="codigo_beneficiario" type="text" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label>:</label>
+                        <label>Nome beneficiário:</label>
                         <input name="nome_beneficiario" type="text" class="form-control" />
                     </div>
                     <div class="form-group">
 
-                        <label>:</label>
+                        <label>Número sequência:</label>
                         <input name="numero_sequencia" type="text" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label>:</label>
+                        <label>Serviço:</label>
                         <select name="nome_servico[]" multiple="multiple" class="form-control select2 j_service_unimed">
 
                             <option selected value="00720">00720</option>
@@ -45,15 +77,15 @@
                         <label style='cursor:pointer;'><input checked type='checkbox' class='j_select_all_service'></label>
                     </div>
                     <div class="form-group">
-                        <label>:</label>
+                        <label>Status:</label>
                         <select class="form-control" name="codigo_status">
-                            <option value='0' SELECTED></option>
-                            <option value='SUCESSO'></option>
-                            <option value='ERRO'></option>
+                            <option value='0' selected>Todos</option>
+                            <option value='SUCESSO'>Sucesso</option>
+                            <option value='ERRO'>Erro</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>:</label>
+                        <label>Data inicial:</label>
                         <div class="input-group">
                             <div class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
@@ -62,7 +94,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>:</label>
+                        <label>Data final:</label>
                         <div class="input-group">
                             <div class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
@@ -72,11 +104,9 @@
                     </div>
                 </div>
                 <div class="box-footer">
-                    <input type='hidden' value='' name='pag' />
-                    <input type='hidden' value='' name='module' />
-                    <button type="submit" class="btn btn-primary" class='j_submit_report' name=""></button>
+                    <button type="submit" class="btn btn-primary" class='j_submit_report' name="">Gerar Relatório</button>
                 </div>
-            </form>
+            {!! Form::close() !!}
         </div>
     </section>
 

@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="{{ asset('css/lightbox.css') }}" />
 <link rel="stylesheet" href="{{ asset('bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
 <link rel='stylesheet' href="{{ asset('css/fonts.css') }}" type='text/css'>
-<link rel='stylesheet' href="{{ asset('css/bootstrap.css') }}" type='text/css'>
+<link rel='stylesheet' href="{{ asset('css/alerts.css') }}" type='text/css'>
 
 <!-- REQUIRED JS SCRIPTS -->
 <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>

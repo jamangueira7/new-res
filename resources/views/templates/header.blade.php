@@ -12,20 +12,20 @@
             <ul class="nav navbar-nav">
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="img/default.png" class="user-image" title="nomeUser">
-                        <span class="hidden-xs">nomeUser</span>
+                        <img src="{{URL::asset('/img/default.png')}}" class="user-image" title="nomeUser">
+                        <span class="hidden-xs">{{Session::get('login')['name']}}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="user-header">
-                            <img src="img/default.png" class="img-circle" title="nomeUser">
-                            <p>nomeUser</p>
+                            <img src="{{URL::asset('/img/default.png')}}" class="img-circle" title="nomeUser">
+                            <p>{{Session::get('login')['name']}}</p>
                         </li>
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#">Pefil</a>
+                                <a href="{{route('user.edit', Session::get('login')['id'])}}">Pefil</a>
                             </div>
                             <div class="pull-right">
-                                <a href="#" class="btn btn-default btn-flat">Sair</a>
+                                <a href="{{route('user.logout')}}" class="btn btn-default btn-flat">Sair</a>
                             </div>
                         </li>
                     </ul>

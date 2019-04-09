@@ -37,7 +37,12 @@ class DashboardController extends Controller
     private function makeData()
     {
         $unimeds = DB::connection('oracle')
-            ->select('RES_UNIDADE_SAUDE');
+        ->table('RES_UNIDADE_SAUDE')
+        ->leftJoin('RES_UNIDADE_IDENTIFICACAO', 'RES_UNIDADE_SAUDE.nr_sequencia', '=', 'RES_UNIDADE_IDENTIFICACAO.nr_seq_unidade_saude')
+        ->select('RES_UNIDADE_SAUDE.cd_sistema_origem AS id_unimed','RES_UNIDADE_SAUDE.nm_unidade_saude AS ds_unimed')
+        ->where('RES_UNIDADE_IDENTIFICACAO.cd_tipo_identificacao','=','IDUN')
+        ->orderBy('RES_UNIDADE_SAUDE.nm_unidade_saude','ASC')
+        ->get();
         return $unimeds;
     }//makeData
 

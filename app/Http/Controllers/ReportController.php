@@ -45,17 +45,17 @@ class ReportController extends Controller
     public function review()
     {
         $unimeds = DB::connection('oracle')
-            ->table('RES_UNIDADE_SAUDE')
-            ->leftJoin('RES_UNIDADE_IDENTIFICACAO', 'RES_UNIDADE_SAUDE.nr_sequencia', '=', 'RES_UNIDADE_IDENTIFICACAO.nr_seq_unidade_saude')
-            ->select('RES_UNIDADE_SAUDE.cd_sistema_origem AS id_unimed','RES_UNIDADE_SAUDE.nm_unidade_saude AS ds_unimed')
-            ->where('RES_UNIDADE_IDENTIFICACAO.cd_tipo_identificacao','=','IDUN')
-            ->orderBy('RES_UNIDADE_SAUDE.nm_unidade_saude','ASC')
-            ->get();
+        ->table('RES_UNIDADE_SAUDE')
+        ->leftJoin('RES_UNIDADE_IDENTIFICACAO', 'RES_UNIDADE_SAUDE.nr_sequencia', '=', 'RES_UNIDADE_IDENTIFICACAO.nr_seq_unidade_saude')
+        ->select('RES_UNIDADE_SAUDE.cd_sistema_origem AS id_unimed','RES_UNIDADE_SAUDE.nm_unidade_saude AS ds_unimed')
+        ->where('RES_UNIDADE_IDENTIFICACAO.cd_tipo_identificacao','=','IDUN')
+        ->orderBy('RES_UNIDADE_SAUDE.nm_unidade_saude','ASC')
+        ->get();
 
         return view('report.review',[
-                'unimeds' => $unimeds,
-                'bet_ini' => null,
-                'bet_fim' => null,
+            'unimeds' => $unimeds,
+            'bet_ini' => null,
+            'bet_fim' => null,
         ]);
     }//review
 
@@ -101,17 +101,83 @@ class ReportController extends Controller
         ]);
     }//listReviewLog
 
-    public function parameters()
-    {
-        return view('report.parameters');
-    }//parameters
-
 
     public function transaction()
     {
-        return view('report.transaction');
+        $unimeds = DB::connection('oracle')
+            ->table('RES_UNIDADE_SAUDE')
+            ->leftJoin('RES_UNIDADE_IDENTIFICACAO', 'RES_UNIDADE_SAUDE.nr_sequencia', '=', 'RES_UNIDADE_IDENTIFICACAO.nr_seq_unidade_saude')
+            ->select('RES_UNIDADE_SAUDE.cd_sistema_origem AS id_unimed','RES_UNIDADE_SAUDE.nm_unidade_saude AS ds_unimed')
+            ->where('RES_UNIDADE_IDENTIFICACAO.cd_tipo_identificacao','=','IDUN')
+            ->orderBy('RES_UNIDADE_SAUDE.nm_unidade_saude','ASC')
+            ->get();
+
+        return view('report.transaction',[
+            'unimeds' => $unimeds
+        ]);
     }//transaction
 
+
+    public function listTransactionLog(Request $request)
+    {
+
+
+        $itwvWHERE  = '';
+        $itwvWHERE .= !empty($request->get('codigo_unimed')) ? "id_unimed IN(". formaterUnimedCodesUnique($request->get('codigo_unimed')) .")" : '';
+        $itwvWHERE .= !empty($request->get('codigo_beneficiario')) ? (!empty($itwvWHERE) ? " AND " : ''). "id_beneficiario LIKE '" . strip_tags($request->get('codigo_beneficiario')) . "%'" : '';
+        $itwvWHERE .= !empty($request->get('nome_beneficiario'))   ? (!empty($itwvWHERE) ? " AND " : ''). "nm_beneficiario LIKE '%" . strip_tags($request->get('nome_beneficiario')) . "%'" : '';
+        $itwvWHERE .= !empty($request->get('numero_sequencia'))    ? (!empty($itwvWHERE) ? " AND " : ''). "nr_seq_transacao LIKE '" . strip_tags($request->get('numero_sequencia')) . "%'" : '';
+        $itwvWHERE .= !empty($request->get('codigo_status'))       ? (!empty($itwvWHERE) ? " AND " : ''). "ds_status = '" . strip_tags($request->get('codigo_status')) . "'" : '';
+
+        $itwvWHERE .= !empty($request->get('nome_servico'))        ? (!empty($itwvWHERE) ? " AND " : ''). "SUBSTR(nm_servico, 0, 5) IN (". formaterServicesCodes($request->get('nome_servico')) .")" : '';
+
+        $itwvWHERE .= !empty($request->get('data_inicial'))        ? (!empty($itwvWHERE) ? " AND " : ''). "dt_log " . (trim($request->get('data_final')) != '' ? "BETWEEN TO_DATE('" . strip_tags(str_replace('%2F', '/', $request->get('data_inicial'))) . "' , 'DD/MM/RRRR') AND TO_DATE('" . strip_tags(str_replace('%2F', '/', $request->get('data_final'))) . "'" : ">= '" . strip_tags(str_replace('%2F', '/', $request->get('data_inicial'))) . "'") . ", 'DD/MM/RRRR')" : '';
+
+         $logs = DB::connection('oracle')
+             ->select("SELECT nr_seq_transacao,
+								   id_unimed,
+								   ds_unimed,
+								   id_beneficiario,
+								   nr_seq_beneficiario,
+								   nm_beneficiario,
+								   dt_nascimento,
+								   id_mensagem_envio,
+								   cd_mensagem,
+								   ds_mensagem,
+								   ds_status,
+								   nm_servico,
+								   nm_operacao,
+								   TO_CHAR(dt_log, 'dd-mm-yyyy HH24:MI:SS') as dt_log,
+								   (CASE WHEN xml_envio IS NOT NULL THEN 1 ELSE 0 END) xml_envio,
+								   (CASE WHEN xml_retorno IS NOT NULL THEN 1 ELSE 0 END) xml_retorno
+					            FROM vw_log_transacao_res_xml
+					            WHERE {$itwvWHERE}
+					            ORDER BY nm_beneficiario ASC");
+
+        return view('report.transaction-list',[
+            'logs' => $logs
+        ]);
+    }//listTransactionLog
+
+    public function transactionXML(Request $request)
+    {
+        $logs = DB::connection('oracle')
+            ->select("SELECT x.nr_sequencia,
+				   x.nr_seq_transacao_res,
+				   x.xml_envio.getclobval() || '\ #####' xml_envio,
+				   x.xml_retorno.getclobval() xml_retorno
+				FROM LOG_transacao_XML x
+				WHERE x.nr_seq_transacao_res = {$request->get('seq')}");
+
+
+        if($request->get('type') == 'RES'){
+            return response()->view('report.xml-view', ['logs' => $logs[0]->xml_envio])
+                ->header('Content-Type', 'text/xml');
+        }else{
+            return response()->view('report.xml-view', ['logs' => $logs[0]->xml_retorno])
+                ->header('Content-Type', 'text/xml');
+        }
+    }//transactionXML
 
     /**
      * Show the form for creating a new resource.

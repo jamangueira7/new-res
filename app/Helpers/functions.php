@@ -57,13 +57,85 @@ function convDateTimeWithBr($data) {
     return $new_data;
 }//convDateTimeWithBr
 
+function convDateWithBr($data) {
+$new_data = explode('-', $data);
+
+$new_data = $new_data[0] . '/' . monthTextForNumber($new_data[1]) . '/' . $new_data[2];
+return $new_data;
+}//convDateWithBr
+
+function monthTextForNumber($data) {
+    switch ($data) {
+        case 'JAN':
+            return '01';
+            break;
+        case 'FEV':
+            return '02';
+            break;
+        case 'MAR':
+            return '03';
+            break;
+        case 'ABR':
+            return '04';
+            break;
+        case 'MAI':
+            return '05';
+            break;
+        case 'JUN':
+            return '06';
+            break;
+        case 'JUL':
+            return '07';
+            break;
+        case 'AGO':
+            return '08';
+            break;
+        case 'SET':
+            return '09';
+            break;
+        case 'OUT':
+            return '10';
+            break;
+        case 'NOV':
+            return '11';
+            break;
+        case 'DEZ':
+            return '12';
+            break;
+
+    }
+
+}//convDateWithBr
+
 function formaterUnimedCodes($data) {
     $resp = "";
     foreach ($data as $d){
         if(!empty($resp)){
             $resp.= ",";
         }
-        $resp.= $d;
+        $resp.= "'" . $d . "'";
+    }
+    return $resp;
+}//formaterUnimedCodes
+
+function formaterUnimedCodesUnique($data) {
+    $resp = "";
+    foreach ($data as $d){
+        if(!empty($resp)){
+            $resp.= ",";
+        }
+        $resp.= "'" . explode("-",$d)[0] . "'";
+    }
+    return $resp;
+}//formaterUnimedCodesUnique
+
+function formaterServicesCodes($data) {
+    $resp = "";
+    foreach ($data as $d){
+        if(!empty($resp)){
+            $resp.= ",";
+        }
+        $resp.= "'" . explode("-",$d)[0] . "'";
     }
     return $resp;
 }//formaterUnimedCodes
