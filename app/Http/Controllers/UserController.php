@@ -6,6 +6,7 @@ use App\User;
 use App\UserPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\HelperLog;
 
 class UserController extends Controller
 {
@@ -81,12 +82,16 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
+        DB::enableQueryLog();
+
         $user = DB::connection('principal')
             ->table('users')
             ->select('id','name','email','cpf','password','level_id')
             ->where('email','=',$request->get('email'))
             ->whereNull('deleted_at')
             ->first();
+
+        //dd($user, DB::getQueryLog()[0]);
 
         if(!empty($user) && $user->password == md5($request->get('pass'))){
             session()->flash('success', [
@@ -102,6 +107,8 @@ class UserController extends Controller
                 'level_id' => $user->level_id
             ]);
 
+            HelperLog::gravaLog('users','Login',str_replace ("?",DB::getQueryLog()[0]['bindings'][0],DB::getQueryLog()[0]['query']), $user->id);
+
             return redirect()->route('dashboard.index');
 
         }else{
@@ -116,6 +123,7 @@ class UserController extends Controller
 
     public function logout()
     {
+        HelperLog::gravaLog('users','Loginout', "", session('login')['id']);
         //CRIAR LOGIN
         session()->forget('login');
 
@@ -144,6 +152,7 @@ class UserController extends Controller
             ->table('users')
             ->where('id','=',$id)
             ->first();
+
         return view('user.edit',[
             'user' => $user
         ]);
@@ -158,6 +167,8 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //DB::table("users")->enableQueryLog();
+
         $user = User::find($id);
         $user->name = $request->get('name');
         $user->cpf = $request->get('cpf');
@@ -165,7 +176,10 @@ class UserController extends Controller
         $user->sex = $request->get('sex');
         $user->save();
 
-        if(!$user->save()){
+        dd($user);
+        HelperLog::gravaLog('users','Alteração', DB::getQueryLog()[0]['query'], session('login')['id']);
+
+        if(!$user){
             session()->flash('error', [
                 'error' => true,
                 'messages' => "Erro ao atualizar usuário. Por favor informe a um administrador.",

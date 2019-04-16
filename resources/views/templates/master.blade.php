@@ -21,16 +21,13 @@
 
                 <section id="content-header" class="content-header">
                     {{--MENSAGENS AO USUARIO--}}
-                   @if(!empty(session('success')['success']))
-                       <div class="alert alert-success" role="alert">
+                       <?php $style = "style=display:none"; ?>
+                       <div class="alert alert-success" id="msgSuccess"role="alert" {{!empty(session('success')['success']) ? "" : $style}}>
                            {{session('success')['messages']}}
                        </div>
-                   @endif
-                   @if(!empty(session('error')['error']))
-                       <div class="alert alert-danger" role="alert">
+                       <div class="alert alert-danger" id="msgError" role="alert" {{!empty(session('error')['error']) ? "" : $style}}>
                            {{session('error')['messages']}}
                        </div>
-                   @endif
                    @yield('conteudo-view')
                 </section>
             </div>

@@ -24,6 +24,11 @@
                         <i class="fa fa-user"></i>Usuário
                     </a>
                 </li>
+                <li >
+                    <a href="{{route('consent.index')}}">
+                        <i class="fa fa-user"></i>Consentimento
+                    </a>
+                </li>
             </ul>
         </li>
         {{--MENU RELATORIOS--}}

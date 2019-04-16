@@ -20,10 +20,14 @@ Route::get('/login', function () {
     return view('login.index');
 })->middleware('checklogin');
 
+//CONSENTIMENTO
+Route::get('/consent', ['as' => 'consent.index','uses' => 'ConsentController@index'])->middleware('checklogin');
+Route::post('/consent/checkstatus', ['as' => 'consent.checkstatus','uses' => 'ConsentController@getConsultaStatus'])->middleware('checklogin');
+
 //USUARIOS
 Route::resource('user', 'UserController')->middleware('checklogin');
 Route::post('/login', ['as' => 'user.login','uses' => 'UserController@login'])->middleware('checklogin');
-Route::get('/logout', ['as' => 'user.logout','uses' => 'UserController@logout'])->middleware('checklogin');
+Route::get('/logout', ['as' => 'user.logout','uses' => 'UserController@logout']);
 Route::get('/restore/{id}', ['as' => 'user.restore','uses' => 'UserController@restore'])->middleware('checklogin');
 
 //RELATORIOS
