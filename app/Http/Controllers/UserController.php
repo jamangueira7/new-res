@@ -20,6 +20,7 @@ class UserController extends Controller
         $users = DB::connection('principal')
             ->table('users')
             ->get();
+
         return view('user.index',[
             'users' => $users
         ]);
@@ -176,8 +177,7 @@ class UserController extends Controller
         $user->sex = $request->get('sex');
         $user->save();
 
-        dd($user);
-        HelperLog::gravaLog('users','Alteração', DB::getQueryLog()[0]['query'], session('login')['id']);
+        //HelperLog::gravaLog('users','Alteração', DB::getQueryLog()[0]['query'], session('login')['id']);
 
         if(!$user){
             session()->flash('error', [
@@ -190,8 +190,7 @@ class UserController extends Controller
                 'messages' => "Usuário alterado com sucesso.",
             ]);
         }
-
-        return redirect()->route('user.index');
+        return redirect()->route('user.edit',$id);
     }//update
 
     /**

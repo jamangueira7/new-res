@@ -7,11 +7,11 @@
 
 @section('conteudo-view')
     <section class="content container-fluid">
-
+        {{--CONSULTAR SATATUS --}}
         <form id="myForm">
                 <div class="box box-primary" id="SearchForStatus">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Consulta Status</h3>
+                        <h3 class="box-title">Consultar status do beneficiário</h3>
                     </div>
                     <div class="box-body">
                         <div class="col-md-6 form-group">
@@ -24,7 +24,7 @@
                             </select>
                         </div>
                         <div class="col-md-6 form-group">
-                            <label>*Codigo beneficiario </label>
+                            <label>*Codigo beneficiário</label>
                             <input class="col-md-6 form-control" id="codBenef" name="codBenef" type="number" value="" required />
                         </div>
                         <div class="box-footer">
@@ -33,18 +33,31 @@
                     </div>
                 </div>
         </form>
-        <form id="myForm2">
-                <div class="box box-primary" style="display:none" id="SearchForConsent">
+        {{--ATIVAR BENEFICIARIO--}}
+        <form id="myForm2" method="post" enctype="multipart/form-data">
+                <div class="box box-primary" id="SearchForConsent">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Enviar consentimento</h3>
+                        <h3 class="box-title">Ativar beneficiário</h3>
                     </div>
+
                     <div class="box-body">
-                        <div class="col-md-12 form-group">
-                            <label>Teste</label>
-                            <input class="col-md-6 form-control" id="tese" name="teste" type="number" value="" required />
+                        <div class="col-md-6 form-group">
+                            <label>*Codigo Unimed</label>
+                            <input class="col-md-6 form-control" id="cod_unimed_ativa" disabled name="cod_unimed_ativa" type="text" value="" required />
                         </div>
-                        <div class="box-footer">
-                            <button class="btn btn-primary" id="ajaxSubmit">Enviar</button>
+                        <div class="col-md-6 form-group">
+                            <label>*Codigo beneficiário</label>
+                            <input class="col-md-6 form-control" id="cod_benef_ativa" disabled name="cod_benef_ativa" type="text" value="" required />
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>Upload de arquivo:</label>
+                            <input type="file" class="form-control-file"  name="fileup" id="fileup">
+                        </div>
+                        <div class="box-footer col-md-6">
+                            <button class="btn btn-primary" id="ajaxSubmit2">Enviar Ativação</button>
+                        </div>
+                        <div class="box-footer col-md-6">
+                            <button class="btn btn-info" id="ajaxNewSearch">Consultar Status</button>
                         </div>
                     </div>
                 </div>
@@ -55,7 +68,8 @@
 @section('js-view')
     <script>
 
-        jQuery(document).ready(function(){
+    jQuery(document).ready(function(){
+            //SUBMIT CONSULTA STATUS
             jQuery('#ajaxSubmit').click(function(e){
                 e.preventDefault();
                 $.ajaxSetup({
@@ -67,8 +81,8 @@
                     url: "{{ url('/consent/checkstatus') }}",
                     method: 'post',
                     data: {
-                        codBenef: jQuery('#codBenef').val(),
-                        codUnimed: jQuery('#codUnimed').val()
+                        codBenef: $('#codBenef').val(),
+                        codUnimed: $('#codUnimed').val()
                     },
                     success: function(result){
                         $( "#msgSuccess" ).text("");
@@ -79,21 +93,55 @@
                         if(result.status == 'active'){
                             $( "#msgSuccess" ).show();
                             $( "#msgSuccess" ).text("Usuário já está ativo!");
-                        }
+                        }//active
 
                         if(result.status == 'inactive'){
                             $( "#msgError" ).show();
-                            $( "#msgError" ).text("Usuário inativo!");
+                            $( "#msgError" ).text(result.msg);
                             $("#SearchForConsent").css("display", "block");
                             $("#SearchForStatus").css("display", "none");
+                            //PEGAR VALORES DO FORM DE BUSCA
+                            $( "#cod_benef_ativa" ).val($('#codBenef').val());
+                            $( "#cod_unimed_ativa" ).val($('#codUnimed').val());
 
-                        }
+                        }//inactive
 
                         if(result.status == 'erro' ){
                             $( "#msgError" ).show();
                             $( "#msgError" ).text(result.msg);
-                        }
+                        }//erro
                     }});
+            });
+            //NOVA BUSCA
+            jQuery('#ajaxNewSearch').click(function(e){
+                $("#SearchForConsent").css("display", "none");
+                $("#SearchForStatus").css("display", "block");
+            });
+
+            //SUBIMT ATIVAR BENEFICIARIO
+            jQuery('#ajaxSubmit2').click(function(e){
+                e.preventDefault();
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                jQuery.ajax({
+                    url: "{{ url('/consent/ativacao') }}",
+                    method: 'POST',
+                    data: new FormData($("#myForm2")[0]),
+                    dataType:'JSON',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function(result){
+                        console.log(result);
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+
             });
         });
 
