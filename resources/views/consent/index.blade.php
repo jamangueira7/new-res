@@ -34,8 +34,8 @@
                 </div>
         </form>
         {{--ATIVAR BENEFICIARIO--}}
-        <form id="myForm2" method="post" enctype="multipart/form-data">
-                <div class="box box-primary" id="SearchForConsent">
+        <form id="myForm2" enctype="multipart/form-data">
+                <div class="box box-primary" id="SearchForConsent" style="display: none">
                     <div class="box-header with-border">
                         <h3 class="box-title">Ativar beneficiário</h3>
                     </div>
@@ -92,7 +92,7 @@
 
                         if(result.status == 'active'){
                             $( "#msgSuccess" ).show();
-                            $( "#msgSuccess" ).text("Usuário já está ativo!");
+                            $( "#msgSuccess" ).text(result.msg);
                         }//active
 
                         if(result.status == 'inactive'){
@@ -114,8 +114,13 @@
             });
             //NOVA BUSCA
             jQuery('#ajaxNewSearch').click(function(e){
+                e.preventDefault();
                 $("#SearchForConsent").css("display", "none");
                 $("#SearchForStatus").css("display", "block");
+                $("#msgError").css("display", "none");
+                $("#msgSuccess").css("display", "none");
+                $( "#codBenef" ).val('');
+                $( "#fileup" ).val('');
             });
 
             //SUBIMT ATIVAR BENEFICIARIO
@@ -135,7 +140,27 @@
                     cache: false,
                     processData: false,
                     success: function(result){
-                        console.log(result);
+                        if(result.status == 'active'){
+                            $( "#msgSuccess" ).show();
+                            $( "#msgSuccess" ).text(result.msg);
+
+                            $("#SearchForConsent").css("display", "none");
+                            $("#SearchForStatus").css("display", "block");
+                            $("#msgError").css("display", "none");
+                            $( "#codBenef" ).val('');
+                            $( "#fileup" ).val('');
+                        }//active
+
+                        if(result.status == 'erro' ){
+                            $( "#msgError" ).show();
+                            $( "#msgError" ).text(result.msg);
+
+                            $("#SearchForConsent").css("display", "none");
+                            $("#SearchForStatus").css("display", "block");
+                            $("#msgSuccess").css("display", "none");
+                            $( "#codBenef" ).val('');
+                            $( "#fileup" ).val('');
+                        }//erro
                     },
                     error: function(data) {
                         console.log(data);

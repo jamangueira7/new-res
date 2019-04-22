@@ -1,6 +1,5 @@
 @extends("templates.report.master-report")
 
-
 @section('css-view')
 
 @stop

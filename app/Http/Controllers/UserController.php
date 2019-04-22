@@ -21,6 +21,7 @@ class UserController extends Controller
             ->table('users')
             ->get();
 
+
         return view('user.index',[
             'users' => $users
         ]);
@@ -78,13 +79,24 @@ class UserController extends Controller
             ]);
         }
 
+        //Log - tab
+        HelperLog::gravaLog(
+            'users',
+            'Inclusão',
+            "#id - ".$user->id
+            ." #email - ".$request->get('email')
+            ." #name - ".$request->get('name')
+            ." #cpf - ".$request->get('cpf')
+            ." #level - ".$request->get('level')
+            ." #birth - ".$request->get('birth')
+            ." #sex - ".$request->get('sex'),
+            session('login')['id']);
+
         return redirect()->route('user.index');
     }
 
     public function login(Request $request)
     {
-        DB::enableQueryLog();
-
         $user = DB::connection('principal')
             ->table('users')
             ->select('id','name','email','cpf','password','level_id')
@@ -108,7 +120,13 @@ class UserController extends Controller
                 'level_id' => $user->level_id
             ]);
 
-            HelperLog::gravaLog('users','Login',str_replace ("?",DB::getQueryLog()[0]['bindings'][0],DB::getQueryLog()[0]['query']), $user->id);
+            //Log - tab
+            HelperLog::gravaLog(
+                'users',
+                'Login',
+                "#id - {$user->id} #email - {$user->email} #name - {$user->name} #level_id - {$user->level_id}
+                ",
+                $user->id);
 
             return redirect()->route('dashboard.index');
 
@@ -125,6 +143,12 @@ class UserController extends Controller
     public function logout()
     {
         HelperLog::gravaLog('users','Loginout', "", session('login')['id']);
+        //Log - tab
+        HelperLog::gravaLog(
+            'users',
+            'Logout',
+            "#id - ".session('login')['id']." #email - ".session('login')['email']." #name - ".session('login')['name']." #level_id - ".session('login')['level_id'],
+            session('login')['id']);
         //CRIAR LOGIN
         session()->forget('login');
 
@@ -177,7 +201,17 @@ class UserController extends Controller
         $user->sex = $request->get('sex');
         $user->save();
 
-        //HelperLog::gravaLog('users','Alteração', DB::getQueryLog()[0]['query'], session('login')['id']);
+        //Log - tab
+        HelperLog::gravaLog(
+            'users',
+            'Alteração',
+            "#id - ".$id
+            ." #email - ".$request->get('email')
+            ." #name - ".$request->get('name')
+            ." #cpf - ".$request->get('cpf')
+            ." #birth - ".$request->get('birth')
+            ." #sex - ".$request->get('sex'),
+            $id);
 
         if(!$user){
             session()->flash('error', [
@@ -204,32 +238,54 @@ class UserController extends Controller
         $user = User::find($id);
 
         if(!$user->delete()){
+            $status = 'error';
             session()->flash('error', [
                 'error' => true,
                 'messages' => "Erro ao excluir usuário. Por favor informe a um administrador.",
             ]);
         }else{
+            $status = 'success';
             session()->flash('success', [
                 'success' => true,
                 'messages' => "Usuário alterado com sucesso.",
             ]);
         }
+
+        //Log - tab
+        HelperLog::gravaLog(
+            'users',
+            'Exclusão',
+            "#id - ".$id
+            ."#status - ".$status,
+            session('login')['id']);
+
         return redirect()->route('user.index');
     }//destroy
 
     public function restore($id)
     {
         if(!User::withTrashed()->where("id", $id)->restore()){
+            $status = 'error';
             session()->flash('error', [
                 'error' => true,
                 'messages' => "Erro ao ativar usuário. Por favor informe a um administrador.",
             ]);
         }else{
+            $status = 'success';
             session()->flash('success', [
                 'success' => true,
                 'messages' => "Usuário ativado com sucesso.",
             ]);
         }
+
+        //Log - tab
+        HelperLog::gravaLog(
+            'users',
+            'Restauração',
+            "#id - ".$id
+            ."#status - ".$status,
+            session('login')['id']);
+
         return redirect()->route('user.index');
     }//restore
 }

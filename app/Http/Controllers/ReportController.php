@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\UserPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\HelperLog;
 
 class ReportController extends Controller
 {
@@ -26,17 +27,34 @@ class ReportController extends Controller
     public function listAccessLog(Request $request)
     {
 
+        if($request->get('codigo_usuario') == '0'){
+            $type = '<>';
+            $value = '0';
+        }else{
+            $type = '=';
+            $value = $request->get('codigo_usuario');
+        }
         $logs = DB::connection('principal')
             ->table('users')
             ->join('logs', 'users.id', '=', 'logs.user_id')
             ->select( 'users.name', 'users.email', 'logs.created_at', 'logs.action')
-            ->where('logs.user_id','=', '1')
+            ->where('logs.user_id',$type, $value)
             ->whereBetween('logs.created_at', [
                 convDateMySQLforDateTime($request->get('data_inicial')),
                 convDateMySQLforDateTime($request->get('data_final'), false)
             ])
             ->orderBy('logs.created_at','asc')
             ->get();
+
+        //Log - tab
+        HelperLog::gravaLog(
+            'logs - Acesso',
+            'Relatório',
+            "#users - ".$value
+                ." #data_inicial - ".convDateMySQLforDateTime($request->get('data_inicial'))
+                ." #data_final - ".convDateMySQLforDateTime($request->get('data_final'), false),
+            session('login')['id']);
+
         return view('report.access-list',[
             'logs' => $logs
         ]);
@@ -61,7 +79,6 @@ class ReportController extends Controller
 
     public function listReviewLog(Request $request)
     {
-
         $itwvWHERE  = '';
         $itwvWHERE .= (!empty($request->get('codigo_unimed'))) ? "AND id_unimed IN(". formaterUnimedCodes($request->get('codigo_unimed')) .")" : '';
         $itwvWHERE .= !empty($request->get('codigo_beneficiario')) ? "AND d.id_carteira_beneficiario LIKE '". strip_tags($request->get('codigo_beneficiario')) ."%'" : '';
@@ -95,6 +112,18 @@ class ReportController extends Controller
                                     AND e.cd_sistema_origem = d.id_unimed || '-' || d.id_unimed 
                                     {$itwvWHERE} 
                                     ORDER BY d.nm_beneficiario ASC");
+
+        //Log - tab
+        HelperLog::gravaLog(
+            'logs - Criticas',
+            'Relatório',
+            "#codigos_unimed - ". (!empty($request->get('codigo_unimed')) ? formaterUnimedCodes($request->get('codigo_unimed')) : 'Todos')
+            ." #codigos_beneficiarios - ".(!empty($request->get('codigo_beneficiario')) ? $request->get('codigo_beneficiario') : 'Vazio')
+            ." #nome_beneficiario - ".(!empty($request->get('nome_beneficiario')) ? $request->get('nome_beneficiario') : 'Vazio')
+            ." #numero_sequencia - ".(!empty($request->get('numero_sequencia')) ? $request->get('numero_sequencia') : 'Vazio')
+            ." #data_inicial - ".$request->get('data_inicial')
+            ." #data_final - ".$request->get('data_final'),
+            session('login')['id']);
 
         return view('report.review-list',[
             'logs' => $logs
@@ -154,6 +183,19 @@ class ReportController extends Controller
 					            WHERE {$itwvWHERE}
 					            ORDER BY nm_beneficiario ASC");
 
+        //Log - tab
+        HelperLog::gravaLog(
+            'logs - Transações',
+            'Relatório',
+            "#codigos_unimed - ". (!empty($request->get('codigo_unimed')) ? formaterUnimedCodes($request->get('codigo_unimed')) : 'Todos')
+            ." #codigos_beneficiarios - ".(!empty($request->get('codigo_beneficiario')) ? $request->get('codigo_beneficiario') : 'Vazio')
+            ." #nome_beneficiario - ".(!empty($request->get('nome_beneficiario')) ? $request->get('nome_beneficiario') : 'Vazio')
+            ." #nome_servico - ". formaterServicesCodes($request->get('nome_servico'))
+            ." #numero_sequencia - ".(!empty($request->get('numero_sequencia')) ? $request->get('numero_sequencia') : 'Vazio')
+            ." #data_inicial - ".$request->get('data_inicial')
+            ." #data_final - ".$request->get('data_final'),
+            session('login')['id']);
+
         return view('report.transaction-list',[
             'logs' => $logs
         ]);
@@ -178,70 +220,5 @@ class ReportController extends Controller
                 ->header('Content-Type', 'text/xml');
         }
     }//transactionXML
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\UserPermission  $userPermission
-     * @return \Illuminate\Http\Response
-     */
-    public function show(UserPermission $userPermission)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\UserPermission  $userPermission
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(UserPermission $userPermission)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\UserPermission  $userPermission
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, UserPermission $userPermission)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\UserPermission  $userPermission
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(UserPermission $userPermission)
-    {
-        //
-    }
+    
 }

@@ -1,6 +1,5 @@
 @extends("templates.report.master-report")
 
-
 @section('css-view')
 
 @stop
@@ -23,9 +22,8 @@
                 <th class="al_center">XML retorno</th>
             </tr>
         </thead>
-        <tbody>,
-
-        @foreach($logs as $log)
+        <tbody>
+            @foreach($logs as $log)
                 <tr>
                     <td>{{$log->nr_seq_transacao}}</td>
                     <td align="center">{{$log->ds_unimed}}</td>
@@ -38,13 +36,16 @@
                     <td align="center">{{convDateTimeWithBr($log->dt_log)}}</td>
                     @if($log->xml_envio == 1)
                         <td align="center"><a href="{{route('report.transaction-xml',['seq' => $log->nr_seq_transacao, 'type' => 'ENV'])}}" target="_blank"><i class="fa fa-file-code-o"></i></a></td>
+                    @else
+                        <td></td>
                     @endif
                     @if($log->xml_retorno == 1)
                         <td align="center"><a href="{{route('report.transaction-xml',['seq' => $log->nr_seq_transacao, 'type' => 'RES'])}}" target="_blank"><i class="fa fa-file-code-o"></i></a></td>
+                    @else
+                        <td></td>
                     @endif
-
-            </tr>
-        @endforeach
+                </tr>
+            @endforeach
         </tbody>
     </table>
 
