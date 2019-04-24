@@ -41,6 +41,6 @@ Route::post('/transaction-list', ['as' => 'report.transaction-list','uses' => 'R
 Route::get('/transaction-xml', ['as' => 'report.transaction-xml','uses' => 'ReportController@transactionXML'])->middleware('checklogin');
 
 //ROUTE PARA FAZER A MIGRAÇÃO DO BANCO ANTIGO PARA O NOVO
-Route::get('/change','ChangeOldController@index')->middleware('checklogin');
+Route::get('/change','ChangeOldController@index');
 
 

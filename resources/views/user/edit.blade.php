@@ -48,6 +48,30 @@
                                         <option value="F" {{($user->sex == 'F') ? "selected" : ""}}>Feminino</option>';
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <label>*Unimed </label>
+
+                                    @if(session('login')['level_id'] != 2)
+                                        <select class="form-control"  name="unimed">
+                                            <option value="0">Todos</option>
+                                            @foreach($unimeds as $unimed)
+                                                @if($unimed->id_unimed == $user->unimed)
+                                                    <option value="{{$unimed->id_unimed}}" selected>{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
+                                                @else
+                                                    <option value="{{$unimed->id_unimed}}">{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <select class="form-control"  name="unimed" disabled>
+                                            @foreach($unimeds as $unimed)
+                                                @if($unimed->id_unimed == $user->unimed)
+                                                    <option value="{{$unimed->id_unimed}}">{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

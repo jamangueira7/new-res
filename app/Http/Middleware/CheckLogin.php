@@ -36,6 +36,7 @@ class CheckLogin
         $user_unimed = Array(
             "/",
             "user/{user}",
+            "user/{user}/edit",
         );
 
         if(empty(session('login')) && Route::getCurrentRoute()->uri != "login"){
@@ -59,6 +60,15 @@ class CheckLogin
                     //PERMITE QUE O USUSARIO SALVE O SEU PROPRIO REGISTRO
                     return redirect()->route('user.edit', session('login')['id']);
 
+                }
+                //PODE EDITAR APEANS O PROPRIO PERFIL
+                if(in_array(Route::getCurrentRoute()->uri, $user_simple) &&
+                    (empty(Route::getCurrentRoute()->parameters()['user']) ||
+                    Route::getCurrentRoute()->parameters()['user'] != (string)session('login')['id']) &&
+                    !$request->is("user/".session('login')['id'],"/edit") &&
+                Route::getCurrentRoute()->uri == "user/{user}/edit"
+                ){
+                    return redirect()->route('user.edit', session('login')['id']);
                 }
             }elseif(session('login')['level_id'] == 3){
                 //USER UNIMED

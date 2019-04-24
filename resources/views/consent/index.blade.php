@@ -16,12 +16,26 @@
                     <div class="box-body">
                         <div class="col-md-6 form-group">
                             <label>*Codigo Unimed</label>
-
-                            <select class="col-md-6 form-control" id="codUnimed"  name="codUnimed">
-                                @foreach($unimeds as $unimed)
-                                    <option value="{{$unimed->id_unimed}}">{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
-                                @endforeach
-                            </select>
+                            @if(session('login')['level_id'] != 2)
+                                <select class="form-control"  name="unimed">
+                                    <option value="0">Todos</option>
+                                    @foreach($unimeds as $unimed)
+                                        @if($unimed->id_unimed == session('login')['unimed'])
+                                            <option value="{{$unimed->id_unimed}}" selected>{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
+                                        @else
+                                            <option value="{{$unimed->id_unimed}}">{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
+                                        @endif
+                                    @endforeach
+                                </select>
+                            @else
+                                <select class="form-control"  name="unimed" disabled>
+                                    @foreach($unimeds as $unimed)
+                                        @if($unimed->id_unimed == session('login')['unimed'])
+                                            <option value="{{$unimed->id_unimed}}">{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
+                                        @endif
+                                    @endforeach
+                                </select>
+                            @endif
                         </div>
                         <div class="col-md-6 form-group">
                             <label>*Codigo beneficiário</label>
@@ -101,8 +115,10 @@
                             $("#SearchForConsent").css("display", "block");
                             $("#SearchForStatus").css("display", "none");
                             //PEGAR VALORES DO FORM DE BUSCA
+                            var res = $('#codUnimed').val().split("-");
+                            console.log(res);
                             $( "#cod_benef_ativa" ).val($('#codBenef').val());
-                            $( "#cod_unimed_ativa" ).val($('#codUnimed').val());
+                            $( "#cod_unimed_ativa" ).val(res[0]);
 
                         }//inactive
 
@@ -121,6 +137,18 @@
                 $("#msgSuccess").css("display", "none");
                 $( "#codBenef" ).val('');
                 $( "#fileup" ).val('');
+            });
+            //APAGAR MENSAGEM DE ERRO
+            $(document).ready(function() {
+
+                $("#codBenef").keyup(function() {
+
+                    if($("#codBenef").val()==''){
+                        $("#msgError").css("display", "none");
+                        $("#msgSuccess").css("display", "none");
+                    }
+                });
+
             });
 
             //SUBIMT ATIVAR BENEFICIARIO

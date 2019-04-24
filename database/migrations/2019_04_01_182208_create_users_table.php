@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->date('birth')->nullable();
             $table->string('password', 255);
             $table->char('sex', 1)->default('M');
+            $table->string('unimed',50)->nullable()->default('0');
 
             $table->unsignedBigInteger('level_id');
 

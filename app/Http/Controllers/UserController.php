@@ -37,8 +37,17 @@ class UserController extends Controller
         $levels = DB::connection('principal')
             ->table('levels')
             ->get();
+
+        $unimeds = DB::connection('oracle')
+            ->table('RES_UNIDADE_SAUDE')
+            ->leftJoin('RES_UNIDADE_IDENTIFICACAO', 'RES_UNIDADE_SAUDE.nr_sequencia', '=', 'RES_UNIDADE_IDENTIFICACAO.nr_seq_unidade_saude')
+            ->select('RES_UNIDADE_SAUDE.cd_sistema_origem AS id_unimed','RES_UNIDADE_SAUDE.nm_unidade_saude AS ds_unimed')
+            ->where('RES_UNIDADE_IDENTIFICACAO.cd_tipo_identificacao','=','IDUN')
+            ->orderBy('RES_UNIDADE_SAUDE.nm_unidade_saude','ASC')
+            ->get();
         return view('user.create', [
-            'levels' => $levels
+            'levels' => $levels,
+            'unimeds' => $unimeds
         ]);
     }
 
@@ -65,6 +74,7 @@ class UserController extends Controller
         $user->level_id = $request->get('level');
         $user->birth = $request->get('birth');
         $user->sex = $request->get('sex');
+        $user->unimed = $request->get('unimed');
         $user->save();
 
         if(!$user->save()){
@@ -99,7 +109,7 @@ class UserController extends Controller
     {
         $user = DB::connection('principal')
             ->table('users')
-            ->select('id','name','email','cpf','password','level_id')
+            ->select('id','name','email','cpf','password','level_id','unimed')
             ->where('email','=',$request->get('email'))
             ->whereNull('deleted_at')
             ->first();
@@ -117,7 +127,8 @@ class UserController extends Controller
                 'id' => $user->id,
                 'email' => $user->email,
                 'name' => $user->name,
-                'level_id' => $user->level_id
+                'level_id' => $user->level_id,
+                'unimed' => $user->unimed
             ]);
 
             //Log - tab
@@ -178,8 +189,17 @@ class UserController extends Controller
             ->where('id','=',$id)
             ->first();
 
+        $unimeds = DB::connection('oracle')
+            ->table('RES_UNIDADE_SAUDE')
+            ->leftJoin('RES_UNIDADE_IDENTIFICACAO', 'RES_UNIDADE_SAUDE.nr_sequencia', '=', 'RES_UNIDADE_IDENTIFICACAO.nr_seq_unidade_saude')
+            ->select('RES_UNIDADE_SAUDE.cd_sistema_origem AS id_unimed','RES_UNIDADE_SAUDE.nm_unidade_saude AS ds_unimed')
+            ->where('RES_UNIDADE_IDENTIFICACAO.cd_tipo_identificacao','=','IDUN')
+            ->orderBy('RES_UNIDADE_SAUDE.nm_unidade_saude','ASC')
+            ->get();
+
         return view('user.edit',[
-            'user' => $user
+            'user' => $user,
+            'unimeds' => $unimeds
         ]);
     }//edit
 

@@ -40,6 +40,7 @@ class ChangeOldController extends Controller
             $newUser->birth = $user->nascimento;
             $newUser->password = $user->senha;
             $newUser->sex = 'M';
+            $newUser->unimed = '0';
             $newUser->level_id = 1;
             $newUser->save();
             $resp .= "->Tabela usuario codigo - {$user->codigo} gravou na Tabela users com o codigo - {$newUser->id} no novo banco" . "<br />";

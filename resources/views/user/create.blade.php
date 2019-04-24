@@ -44,6 +44,16 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label>*Unimed </label>
+                                    <select class="form-control"  name="unimed">
+                                        <option value="0">Todos</option>
+                                        @foreach($unimeds as $unimed)
+                                            <option value="{{$unimed->id_unimed}}">{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
                                     <label>CPF</label>
                                     <input class="form-control cpf"  name="cpf" type="text" value="" />
                                 </div>

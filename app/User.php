@@ -15,7 +15,7 @@ class User extends Authenticatable
     protected $connection = "principal";
 
     protected $fillable = [
-        'name','email','cpf','birth','password','sex','level_id'
+        'name','email','cpf','birth','password','sex','level_id','unimed'
     ];
 
     protected $hidden = [];
