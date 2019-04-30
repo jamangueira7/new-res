@@ -22,6 +22,7 @@ Route::get('/login', function () {
 
 //CONSENTIMENTO
 Route::get('/consent', ['as' => 'consent.index','uses' => 'ConsentController@index'])->middleware('checklogin');
+Route::get('/consent/recover', ['as' => 'consent.recover','uses' => 'ConsentController@recover'])->middleware('checklogin');
 Route::post('/consent/checkstatus', ['as' => 'consent.checkstatus','uses' => 'ConsentController@getConsultaStatus'])->middleware('checklogin');
 Route::post('/consent/ativacao', ['as' => 'consent.ativacao','uses' => 'ConsentController@getAtivacao'])->middleware('checklogin');
 

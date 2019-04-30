@@ -128,7 +128,8 @@ class UserController extends Controller
                 'email' => $user->email,
                 'name' => $user->name,
                 'level_id' => $user->level_id,
-                'unimed' => $user->unimed
+                'unimed' => $user->unimed,
+                'cpf' => $user->cpf
             ]);
 
             //Log - tab

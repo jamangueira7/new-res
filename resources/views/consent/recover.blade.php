@@ -7,75 +7,7 @@
 
 @section('conteudo-view')
     <section class="content container-fluid">
-        {{--CONSULTAR SATATUS --}}
-        <form id="myForm">
-                <div class="box box-primary" id="SearchForStatus">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Consultar status do beneficiário</h3>
-                    </div>
-                    <div class="box-body">
-                        <div class="col-md-6 form-group">
-                            <label>*Codigo Unimed</label>
-                            @if(session('login')['level_id'] != 2)
-                                <select class="form-control"  name="codUnimed" id="codUnimed">
-                                    <option value="0">Todos</option>
-                                    @foreach($unimeds as $unimed)
-                                        @if($unimed->id_unimed == session('login')['unimed'])
-                                            <option value="{{$unimed->id_unimed}}" selected>{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
-                                        @else
-                                            <option value="{{$unimed->id_unimed}}">{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
-                                        @endif
-                                    @endforeach
-                                </select>
-                            @else
-                                <select class="form-control" id="codUnimed" name="codUnimed" disabled>
-                                    @foreach($unimeds as $unimed)
-                                        @if($unimed->id_unimed == session('login')['unimed'])
-                                            <option value="{{$unimed->id_unimed}}">{{explode("-",$unimed->id_unimed)[0]}} - {{$unimed->ds_unimed}}</option>';
-                                        @endif
-                                    @endforeach
-                                </select>
-                            @endif
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>*Codigo beneficiário</label>
-                            <input class="col-md-6 form-control" id="codBenef" name="codBenef" type="number" value="" required />
-                        </div>
-                        <div class="box-footer">
-                            <button class="btn btn-primary" id="ajaxSubmit">Enviar</button>
-                        </div>
-                    </div>
-                </div>
-        </form>
-        {{--ATIVAR BENEFICIARIO--}}
-        <form id="myForm2" enctype="multipart/form-data">
-                <div class="box box-primary" id="SearchForConsent" style="display: none">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Ativar beneficiário</h3>
-                    </div>
-
-                    <div class="box-body">
-                        <div class="col-md-6 form-group">
-                            <label>*Codigo Unimed</label>
-                            <input class="col-md-6 form-control" id="cod_unimed_ativa" disabled name="cod_unimed_ativa" type="text" value="" required />
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>*Codigo beneficiário</label>
-                            <input class="col-md-6 form-control" id="cod_benef_ativa" disabled name="cod_benef_ativa" type="text" value="" required />
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <label>Upload de arquivo:</label>
-                            <input type="file" class="form-control-file"  name="fileup" id="fileup">
-                        </div>
-                        <div class="box-footer col-md-6">
-                            <button class="btn btn-primary" id="ajaxSubmit2">Enviar Ativação</button>
-                        </div>
-                        <div class="box-footer col-md-6">
-                            <button class="btn btn-info" id="ajaxNewSearch">Consultar Status</button>
-                        </div>
-                    </div>
-                </div>
-        </form>
+       teste
     </section>
 @stop
 
@@ -91,7 +23,6 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-				
                 jQuery.ajax({
                     url: "{{ url('/consent/checkstatus') }}",
                     method: 'post',

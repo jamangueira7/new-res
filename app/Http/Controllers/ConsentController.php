@@ -31,6 +31,11 @@ class ConsentController extends Controller
         ]);
     }//index
 
+    public function recover()
+    {
+        return view('consent.recover');
+    }//recover
+
     public function getConsultaStatus(Request $request)
     {
         $soapUrl = "https://s975lresdesesb01.unimedpr.com.br:8243/services/00820_consultaStatusBeneficiario?wsdl";
@@ -50,6 +55,10 @@ class ConsentController extends Controller
             'unimed' => $cod_unimed
         ]);
 
+        $user = strtolower(str_replace(" ",".",session('login')['name']));
+        $cpf = str_replace(".","",session('login')['cpf']);
+        $cpf = str_replace("-","",$cpf);
+
         $xml_post_string = '<?xml version="1.0" encoding="utf-8"?>
                             <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:con="http://integracao-res.unimed.com.br/schemas/servico/consulta/dados-demograficos/padrao-unimed/consulta-status-beneficiario/">
                                <soapenv:Header/>
@@ -61,8 +70,8 @@ class ConsentController extends Controller
                                      </IdentificacaoBeneficiario>
                                      <IdentificacaoProfissional>
                                         <ProfissionalNaoSaude>
-                                           <Abreviatura>joao.silva</Abreviatura>
-                                           <CadastroPessoaFisica>59301754541</CadastroPessoaFisica>
+                                           <Abreviatura>'.$user.'</Abreviatura>
+                                           <CadastroPessoaFisica>'.$cpf.'</CadastroPessoaFisica>
                                         </ProfissionalNaoSaude>
                                      </IdentificacaoProfissional>
                                   </con:ConsultaStatusBeneficiario>
@@ -192,6 +201,9 @@ class ConsentController extends Controller
         $cod_unimed = session('consent')['unimed'];
         $cod_beneficiario = session('consent')['beneficiario'];
 
+        $user = strtolower(str_replace(" ",".",session('login')['name']));
+        $cpf = str_replace(".","",session('login')['cpf']);
+        $cpf = str_replace("-","",$cpf);
 
         $xml_post_string = '<?xml version="1.0" encoding="utf-8"?>
                             <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ativ="http://integracao-res.unimed.com.br/schemas/servico/recebimento/dados-demograficos/ativacao-beneficiario" xmlns:xm="http://www.w3.org/2005/05/xmlmime">
@@ -204,10 +216,10 @@ class ConsentController extends Controller
                                              </IdentificacaoBeneficiario>
                                              <IdentificacaoProfissional>
                                                 <ProfissionalNaoSaude>
-                                                   <Abreviatura>joao.silva</Abreviatura>
+                                                   <Abreviatura>'.$user.'</Abreviatura>
                                                    <!--Optional:-->
-                                                   <NomeCompleto>Joao Silva</NomeCompleto>
-                                                   <CadastroPessoaFisica>59301754541</CadastroPessoaFisica>
+                                                   <NomeCompleto>'.session('login')['name'].'</NomeCompleto>
+                                                   <CadastroPessoaFisica>'.$cpf.'</CadastroPessoaFisica>
                                                 </ProfissionalNaoSaude>
                                              </IdentificacaoProfissional>
                                              <ConsentimentoAceite>

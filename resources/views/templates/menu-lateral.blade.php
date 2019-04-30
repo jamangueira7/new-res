@@ -30,6 +30,11 @@
                             <i class="fa fa-user"></i>Consentimento
                         </a>
                     </li>
+                    <li >
+                        <a href="{{route('consent.recover')}}">
+                            <i class="fa fa-user"></i>Recuperar arquivo
+                        </a>
+                    </li>
                 @endif
             </ul>
         </li>

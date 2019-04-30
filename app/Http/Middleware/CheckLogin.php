@@ -27,6 +27,7 @@ class CheckLogin
         $user_simple = Array(
             "user/{user}/edit",
             "user/{user}",
+            "consent/recover",
             "consent",
             "consent/checkstatus",
             "consent/ativacao",
