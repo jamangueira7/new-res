@@ -28,6 +28,7 @@ class CheckLogin
             "user/{user}/edit",
             "user/{user}",
             "consent/recover",
+            "consent/download/{url}",
             "consent",
             "consent/checkstatus",
             "consent/ativacao",
@@ -38,6 +39,11 @@ class CheckLogin
             "/",
             "user/{user}",
             "user/{user}/edit",
+            "consent",
+            "consent/recover",
+            "consent/download/{url}",
+            "consent/checkstatus",
+            "consent/ativacao",
         );
 
         if(empty(session('login')) && Route::getCurrentRoute()->uri != "login"){

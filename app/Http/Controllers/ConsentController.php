@@ -33,8 +33,30 @@ class ConsentController extends Controller
 
     public function recover()
     {
-        return view('consent.recover');
+        $archives = DB::connection('principal')
+            ->table('consents')
+            ->leftJoin('users', 'consents.user_id', '=', 'users.id')
+            ->select('consents.code','consents.archive','consents.unimed','consents.user_id','consents.recipient', 'users.name')
+            ->whereIn('user_id',
+                session('login')['level_id'] == '2' ? [session('login')['id']] : ['0'],
+                '',
+                session('login')['level_id'] == '2' ? false : true)
+            ->get();
+
+        return view('consent.recover',[
+            'archives' => $archives
+        ]);
     }//recover
+
+    public function download($code)
+    {
+        $archives = DB::connection('principal')
+            ->table('consents')
+            ->select('archive')
+            ->where('code','=', "{$code}")
+            ->first();
+       return response()->download(public_path().'/pdf/'.$archives->archive);
+    }//download
 
     public function getConsultaStatus(Request $request)
     {
@@ -111,6 +133,7 @@ class ConsentController extends Controller
             $response2 = new \DOMDocument($response);
             $response2->loadXml($response);
             $value = $response2->getElementsByTagName('mensagem_erro')->item(0)->textContent;
+            //$detalhes = $response2->getElementsByTagName('detalhe')->item(0)->textContent;
 
             //Log - tab
             HelperLog::gravaLog(
@@ -294,7 +317,7 @@ class ConsentController extends Controller
 
             //Gravar arquivo
             HelperLog::gravaConsent((string)$mensagemEnvioID[0],
-                $archive,
+                $new_name,
                 'Ativo',
                 $cod_beneficiario,
                 $cod_unimed,

@@ -6,8 +6,37 @@
 @stop
 
 @section('conteudo-view')
+
     <section class="content container-fluid">
-       teste
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Transações consentimento</h3>
+            </div>
+            <table class="table table-hover al_center" style="max-width: 99.99%;" id="example">
+                <thead>
+                <tr>
+                    <th width='300' class="al_center">Codigo transação</th>
+                    <th width='80'>Codigo Unimed</th>
+                    <th width='150' class="al_center">Codigo beneficiario</th>
+                    <th width='250' class="al_center">Usuario</th>
+                    <th width='110' class="al_center">Arquivo</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($archives as $archive)
+                    <tr>
+                        <td class="al_center">{{$archive->code}}</td>
+                        <td class="al_left">{{$archive->unimed}}</td>
+                        <td class="al_center">{{$archive->recipient}}</td>
+                        <td class="al_center">{{$archive->name}}</td>
+                        <td class="al_center">
+                            <a href="{{route('consent.download',[$archive->code])}}" target=”_blank” >Download</a>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
     </section>
 @stop
 
